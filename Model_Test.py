@@ -5,12 +5,13 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 cap = cv.VideoCapture(0)
-model_path = r'./checkpoints/age_range_model1.epoch16-loss4.51.hdf5'
+model_path = r'./checkpoints/age_range_model2_classification_relu.epoch16-loss1.78.hdf5'
 model = tf.keras.models.load_model(model_path)
 
 face_cascade = cv.CascadeClassifier('./cascade/haarcascade_frontalface.xml');
 
 is_age_range = "age_range" in model_path
+is_classification = "classification" in model_path
 
 count = 0
 sum = 0
@@ -27,11 +28,18 @@ while True:
 
     if (len(faces) >= 1):
         (x, y, w, h) = faces[0]
-        cropped = np.array([row[x + 20: x + w - 20] for row in gray[y + 5: y + h - 5]])
+        cropped = np.array([row[x + 30: x + w - 30] for row in gray[y + 5: y + h - 5]])
         small = cv.resize(cropped, (48, 48))
-        # cv.imshow('small ', cropped)
+
         img = np.asarray(small).reshape((48,48,1))
-        pred = model.predict(np.array([img]))[0][0] 
+        cv.imshow('small ', img)
+
+        pred = model.predict(np.array([img]))[0]
+
+        if is_classification:
+            pred = np.array(tf.math.argmax(pred))
+        else:
+            pred = pred[0]
 
         if pred != 0:
             count += 1
