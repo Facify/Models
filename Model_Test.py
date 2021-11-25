@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 cap = cv.VideoCapture(0)
 model_path = r'./checkpoints/age_range_model2_classification_relu.epoch16-loss1.78.hdf5'
+other_path = r'./checkpoints/my_best_model.epoch15-loss106.01.hdf5'
+model_path = other_path
 model = tf.keras.models.load_model(model_path)
 
 face_cascade = cv.CascadeClassifier('./cascade/haarcascade_frontalface.xml');
